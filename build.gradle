@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.github.matiasferrerovilas'
-version = '1.0.3'
+version = '1.0.7'
 
 gradlePlugin {
 	website = 'https://github.com/matiasferrerovilas/native-hint'

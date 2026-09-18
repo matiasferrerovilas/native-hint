@@ -14,16 +14,16 @@ public class SampleRabbitPublisher {
 		this.rabbitTemplate = rabbitTemplate;
 	}
 
-	public void publishInvitationCreated(InvitationCreatedEvent event) {
-		rabbitTemplate.convertAndSend("identity.topic", "invitation.sent", event);
+	public void publishTicketCreated(TicketCreatedEvent event) {
+		rabbitTemplate.convertAndSend("support.topic", "ticket.created", event);
 	}
 
 	public void publishFromConstructor() {
-		rabbitTemplate.convertAndSend("identity.topic", "member.removed", new MemberRemovedEvent("w1", "u1"));
+		rabbitTemplate.convertAndSend("support.topic", "ticket.closed", new TicketClosedEvent("t1", "u1"));
 	}
 
-	@RabbitListener(queues = "invitation-queue")
-	public void onInvitationAccepted(InvitationAcceptedEvent event) {
+	@RabbitListener(queues = "ticket-queue")
+	public void onTicketAssigned(TicketAssignedEvent event) {
 		System.out.println(event);
 	}
 

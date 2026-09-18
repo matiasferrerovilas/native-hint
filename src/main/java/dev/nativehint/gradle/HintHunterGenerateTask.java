@@ -67,10 +67,10 @@ public abstract class HintHunterGenerateTask extends DefaultTask {
 			all.addAll(scanner.scanDirectory(dir.toPath()));
 		}
 
-		Set<String> resolvedFqns = new LinkedHashSet<>();
+		Set<String> directFqns = new LinkedHashSet<>();
 		for (HintCandidate c : all) {
 			if (isFullyQualified(c.typeName())) {
-				resolvedFqns.add(c.typeName());
+				directFqns.add(c.typeName());
 			} else {
 				getLogger().warn("native-hint: no pude resolver el tipo completo de '{}' en {}:{} "
 								+ "(dependencia fuera del classpath conocido, tipo genérico, etc.) "
@@ -79,6 +79,9 @@ public abstract class HintHunterGenerateTask extends DefaultTask {
 			}
 		}
 
+		List<Path> sourceRoots = existingDirs.stream().map(File::toPath).collect(java.util.stream.Collectors.toList());
+		Set<String> resolvedFqns = scanner.expandNestedFieldTypes(directFqns, sourceRoots);
+
 		try {
 			writeRegistrarSource(resolvedFqns);
 			writeAotFactories();
@@ -86,8 +89,9 @@ public abstract class HintHunterGenerateTask extends DefaultTask {
 			throw new UncheckedIOException(e);
 		}
 
-		getLogger().lifecycle("native-hint: {} tipo(s) registrados automáticamente para GraalVM native-image.",
-				resolvedFqns.size());
+		getLogger().lifecycle("native-hint: {} tipo(s) registrados automáticamente para GraalVM native-image "
+						+ "({} detectados directamente + {} campos anidados expandidos).",
+				resolvedFqns.size(), directFqns.size(), resolvedFqns.size() - directFqns.size());
 	}
 
 	private void ensureOutputDirsExist() {

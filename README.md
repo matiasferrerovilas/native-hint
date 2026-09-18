@@ -7,12 +7,26 @@ como native image.
 
 Casos detectados hoy:
 
-- `rabbitTemplate.convertAndSend(..., payload)` — el payload viaja como `Object` genérico y nunca
-  aparece en la firma de un `@RestController`, así que el escaneo AOT de Spring MVC no lo alcanza.
-- Parámetros de métodos `@RabbitListener` / `@MessageMapping` — mismo problema, el tipo del
-  mensaje no pasa por el escaneo MVC.
+- `rabbitTemplate.convertAndSend(..., payload)` / `eventPublisher.publishEvent(...)` — el payload
+  viaja como `Object` genérico y nunca aparece en la firma de un `@RestController`, así que el
+  escaneo AOT de Spring MVC no lo alcanza.
+- Parámetros de métodos `@RabbitListener` / `@MessageMapping` / `@EventListener` — mismo problema,
+  el tipo del mensaje no pasa por el escaneo MVC.
+- Parámetros anotados `@ParameterObject` (springdoc-openapi) — bindean un record/DTO completo
+  desde query params, pero nunca son el tipo de RETORNO de ningún controller.
+- Tipo de retorno de métodos `@HttpExchange`/`@GetExchange`/`@PostExchange`/etc. (clientes HTTP
+  declarativos) — se deserializa desde la respuesta JSON sin pasar nunca por un controller propio.
+  Desenrolla `List<T>`, `ResponseEntity<T>`, `Optional<T>`, etc.
+- Clases `implements ConstraintValidator<...>` — Bean Validation las instancia por reflection.
 - Referencias `T(fully.qualified.Type)` dentro de expresiones SpEL escritas como string
   (`@PreAuthorize`, `@Value`, etc.) — para el compilador es texto, no código.
+- **Expansión recursiva de campos anidados**: si un tipo detectado tiene un campo cuyo tipo es
+  otro record/DTO propio del proyecto, ese tipo también se registra, con la profundidad que haga
+  falta.
+- **Rastreo de genéricos entre clases**: si un campo es de un parámetro de tipo propio (p.ej.
+  `T message` en un wrapper `MessageEnvelope<T>`), sigue los call sites que instancian ese wrapper —
+  y si el argumento ahí también es demasiado genérico (`Object`), sigue la cadena hacia los call
+  sites de ese método, acotado en profundidad.
 
 ## Uso como plugin de Gradle (auto-registro, recomendado)
 
@@ -32,7 +46,7 @@ En `build.gradle`:
 ```groovy
 plugins {
 	id 'java'
-	id 'io.github.matiasferrerovilas.nativehint' version '1.0.3'
+	id 'io.github.matiasferrerovilas.nativehint' version '1.0.6'
 }
 
 repositories {
@@ -43,7 +57,7 @@ repositories {
 dependencies {
 	// Solo para que @NativeHint resuelva en compilación — retención SOURCE,
 	// no queda en el classpath de runtime ni en el jar/native-image final.
-	compileOnly 'io.github.matiasferrerovilas:native-hint:1.0.3'
+	compileOnly 'io.github.matiasferrerovilas:native-hint:1.0.6'
 }
 ```
 
@@ -87,16 +101,14 @@ Imprime los candidatos encontrados y un `RuntimeHintsRegistrar` de ejemplo listo
 
 ## Estado
 
-Validado de punta a punta contra código real, en dos proyectos sin nada en común entre sí:
-
-- **api-identity / api-movements** (paquetes `com.api.identity.*` / `api.m2.movements.*`):
-  detecta exactamente los mismos tipos que ya estaban registrados a mano en sus respectivos
-  `WebBindingRuntimeHints`, sin falsos positivos. `./gradlew processAot` corre limpio: Spring
-  descubre y ejecuta el `RuntimeHintsRegistrar` generado sin `ClassNotFoundException` ni ningún
-  otro error.
-- **Proyecto demo sin relación alguna** (paquete `com.demo.*`, cero código compartido): mismo
-  resultado, mismo flujo, sin ningún ajuste — confirma que no hay nada hardcodeado a un proyecto
-  en particular.
+Validado de punta a punta contra código real (dos servicios Spring Boot + GraalVM native-image en
+producción, sin relación entre sí, y un proyecto de prueba desde cero): detecta exactamente los
+mismos tipos que ya estaban registrados a mano en un `RuntimeHintsRegistrar` escrito manualmente,
+sin falsos positivos, y `./gradlew processAot` corre limpio — Spring descubre y ejecuta el
+`RuntimeHintsRegistrar` generado sin `ClassNotFoundException` ni ningún otro error. En uno de esos
+proyectos, el archivo escrito a mano (16 tipos) quedó completamente reemplazado por el generado
+automáticamente (42 tipos, incluyendo campos anidados y un caso de genéricos entre clases que el
+desarrollador ni siquiera tenía registrado).
 
 Resolución de tipos vía `JavaSymbolSolver` (raíz de fuentes escaneada + reflection para el JDK),
 con fallback a heurística de AST cuando el solver no puede resolver algo (dependencia fuera del

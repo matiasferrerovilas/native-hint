@@ -15,17 +15,44 @@ import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Detecta el tipo publicado en llamadas {@code rabbitTemplate.convertAndSend(...)}: ese tipo viaja
- * como {@code Object} genérico y nunca aparece en la firma de un {@code @RestController}, así que
- * el escaneo AOT de Spring MVC no lo alcanza (ver WebBindingRuntimeHints.java en api-identity).
- * Resuelve el tipo estático del último argumento sin symbol solver: constructor directo, variable
- * local, parámetro de método o campo de la clase.
+ * Detecta el tipo publicado en llamadas a métodos "de payload genérico" — el argumento viaja como
+ * {@code Object}, así que nunca aparece en la firma de un {@code @RestController} y el escaneo AOT
+ * de Spring MVC no lo alcanza:
+ * <ul>
+ *   <li>{@code rabbitTemplate.convertAndSend(...)} — mensajería AMQP/WebSocket-STOMP.</li>
+ *   <li>{@code eventPublisher.publishEvent(...)} — el bus de eventos in-process de Spring.</li>
+ * </ul>
+ * Resuelve el tipo estático del último argumento con el symbol solver, con fallback a heurística
+ * de AST (constructor directo, variable local, parámetro de método o campo de la clase) cuando el
+ * solver no puede.
  */
-public class RabbitCallScanner {
+public class MethodCallPayloadScanner {
+
+	/** Métodos cuyo último argumento es un payload que Spring AOT no puede descubrir por sí solo. */
+	private enum GenericPayloadMethod {
+		CONVERT_AND_SEND("convertAndSend", HintCandidate.Reason.RABBIT_CONVERT_AND_SEND),
+		PUBLISH_EVENT("publishEvent", HintCandidate.Reason.APPLICATION_EVENT_PUBLISHED);
+
+		private final String methodName;
+		private final HintCandidate.Reason reason;
+
+		GenericPayloadMethod(String methodName, HintCandidate.Reason reason) {
+			this.methodName = methodName;
+			this.reason = reason;
+		}
+
+		static Optional<HintCandidate.Reason> reasonFor(String methodName) {
+			return Arrays.stream(values())
+					.filter(m -> m.methodName.equals(methodName))
+					.map(m -> m.reason)
+					.findFirst();
+		}
+	}
 
 	public List<HintCandidate> scan(CompilationUnit cu, String fileName) {
 		List<HintCandidate> found = new ArrayList<>();
@@ -33,15 +60,16 @@ public class RabbitCallScanner {
 			@Override
 			public void visit(MethodCallExpr call, Void arg) {
 				super.visit(call, arg);
-				if (!"convertAndSend".equals(call.getNameAsString()) || call.getArguments().isEmpty()) {
+				Optional<HintCandidate.Reason> reason = GenericPayloadMethod.reasonFor(call.getNameAsString());
+				if (reason.isEmpty() || call.getArguments().isEmpty()) {
 					return;
 				}
 				Expression payload = call.getArgument(call.getArguments().size() - 1);
 				resolveType(payload).ifPresentOrElse(
-						typeName -> found.add(new HintCandidate(typeName, HintCandidate.Reason.RABBIT_CONVERT_AND_SEND,
+						typeName -> found.add(new HintCandidate(typeName, reason.get(),
 								fileName, call.getBegin().map(p -> p.line).orElse(-1), call.toString())),
 						() -> found.add(new HintCandidate("<unresolved: " + payload + ">",
-								HintCandidate.Reason.RABBIT_CONVERT_AND_SEND, fileName,
+								reason.get(), fileName,
 								call.getBegin().map(p -> p.line).orElse(-1), call.toString())));
 			}
 		}, null);
@@ -55,16 +83,12 @@ public class RabbitCallScanner {
 			// El symbol solver no pudo resolverlo (dependencia fuera del classpath conocido,
 			// tipo genérico, etc.) — caemos a la heurística de AST de abajo.
 		}
-		if (payload instanceof ObjectCreationExpr creation) {
-			return Optional.of(creation.getType().asString());
-		}
-		if (payload instanceof NameExpr nameExpr) {
-			return resolveSimpleName(nameExpr, nameExpr.getNameAsString());
-		}
-		if (payload instanceof FieldAccessExpr fieldAccess) {
-			return resolveSimpleName(fieldAccess, fieldAccess.getNameAsString());
-		}
-		return Optional.empty();
+		return switch (payload) {
+			case ObjectCreationExpr creation -> Optional.of(creation.getType().asString());
+			case NameExpr nameExpr -> resolveSimpleName(nameExpr, nameExpr.getNameAsString());
+			case FieldAccessExpr fieldAccess -> resolveSimpleName(fieldAccess, fieldAccess.getNameAsString());
+			default -> Optional.empty();
+		};
 	}
 
 	private Optional<String> resolveSimpleName(Node context, String name) {
