@@ -1,0 +1,50 @@
+plugins {
+	id 'java-library'
+	id 'application'
+	id 'java-gradle-plugin'
+	id 'maven-publish'
+	id 'com.gradle.plugin-publish' version '2.2.1'
+}
+
+group = 'dev.nativehint'
+version = '1.0.0'
+
+gradlePlugin {
+	website = 'https://github.com/matiasferrerovilas/native-hint'
+	vcsUrl = 'https://github.com/matiasferrerovilas/native-hint.git'
+	plugins {
+		hintHunter {
+			id = 'io.github.matiasferrerovilas.nativehint'
+			implementationClass = 'dev.nativehint.gradle.HintHunterPlugin'
+			displayName = 'Native Hint'
+			description = 'Encuentra tipos que necesitan runtime hints explícitos para GraalVM native-image (payloads de RabbitMQ, parámetros de @RabbitListener/@MessageMapping, referencias T(...) en SpEL) que el escaneo AOT de Spring no alcanza.'
+			tags.set(['graalvm', 'native-image', 'spring-boot', 'spring-aot'])
+		}
+	}
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.26.2'
+
+	testImplementation platform('org.junit:junit-bom:5.11.0')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+	mainClass = 'dev.nativehint.HintHunter'
+}
+
+test {
+	useJUnitPlatform()
+}

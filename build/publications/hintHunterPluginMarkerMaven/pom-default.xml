@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.nativehint</groupId>
+  <artifactId>dev.nativehint.gradle.plugin</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Native Hint</name>
+  <description>Encuentra tipos que necesitan runtime hints explícitos para GraalVM native-image (payloads de RabbitMQ, parámetros de @RabbitListener/@MessageMapping, referencias T(...) en SpEL) que el escaneo AOT de Spring no alcanza.</description>
+  <dependencies>
+    <dependency>
+      <groupId>dev.nativehint</groupId>
+      <artifactId>api-native-hint</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>

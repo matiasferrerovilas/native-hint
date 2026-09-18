@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>dev.nativehint</groupId>
+  <artifactId>api-native-hint</artifactId>
+  <versioning>
+    <latest>0.1.0-SNAPSHOT</latest>
+    <versions>
+      <version>0.1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20260918140238</lastUpdated>
+  </versioning>
+</metadata>

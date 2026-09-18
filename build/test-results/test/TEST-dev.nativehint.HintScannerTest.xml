@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.nativehint.HintScannerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-18T14:02:38.528Z" hostname="MATI" time="0.248">
+  <properties/>
+  <testcase name="resolvesConvertAndSendPayloadConstructedInline()" classname="dev.nativehint.HintScannerTest" time="0.196"/>
+  <testcase name="findsExactlyFourCandidatesInFixture()" classname="dev.nativehint.HintScannerTest" time="0.009"/>
+  <testcase name="resolvesFullyQualifiedNameWhenTypeIsDeclaredInTheScannedSourceRoot()" classname="dev.nativehint.HintScannerTest" time="0.009"/>
+  <testcase name="detectsSpelTypeReference()" classname="dev.nativehint.HintScannerTest" time="0.008"/>
+  <testcase name="detectsRabbitListenerParameterType()" classname="dev.nativehint.HintScannerTest" time="0.006"/>
+  <testcase name="resolvesConvertAndSendPayloadPassedAsVariable()" classname="dev.nativehint.HintScannerTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
