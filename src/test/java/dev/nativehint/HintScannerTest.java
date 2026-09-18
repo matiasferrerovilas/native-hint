@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HintScannerTest {
@@ -52,5 +53,16 @@ class HintScannerTest {
 		List<HintCandidate> found = new HintScanner().scanDirectory(solverProjectRoot);
 		assertTrue(found.stream().anyMatch(c -> c.reason() == HintCandidate.Reason.RABBIT_CONVERT_AND_SEND
 				&& c.typeName().equals("com.example.events.OrderCreatedEvent")));
+	}
+
+	@Test
+	void detectsNativeHintMarkerWhenPresent() {
+		Path markerRoot = Path.of("src/test/resources/fixtures/marker");
+		assertTrue(new HintScanner().hasNativeHintMarker(markerRoot));
+	}
+
+	@Test
+	void doesNotDetectNativeHintMarkerWhenAbsent() {
+		assertFalse(new HintScanner().hasNativeHintMarker(FIXTURE.getParent()));
 	}
 }

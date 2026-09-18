@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.matiasferrerovilas.nativehint</groupId>
   <artifactId>io.github.matiasferrerovilas.nativehint.gradle.plugin</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
   <packaging>pom</packaging>
   <name>Native Hint</name>
   <description>Encuentra tipos que necesitan runtime hints explícitos para GraalVM native-image (payloads de RabbitMQ, parámetros de @RabbitListener/@MessageMapping, referencias T(...) en SpEL) que el escaneo AOT de Spring no alcanza.</description>
   <dependencies>
     <dependency>
-      <groupId>dev.nativehint</groupId>
+      <groupId>io.github.matiasferrerovilas</groupId>
       <artifactId>api-native-hint</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.2</version>
     </dependency>
   </dependencies>
 </project>

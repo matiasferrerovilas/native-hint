@@ -1,9 +1,9 @@
 {
   "formatVersion": "1.1",
   "component": {
-    "group": "dev.nativehint",
+    "group": "io.github.matiasferrerovilas",
     "module": "api-native-hint",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "attributes": {
       "org.gradle.status": "release"
     }
@@ -19,19 +19,19 @@
       "attributes": {
         "org.gradle.category": "library",
         "org.gradle.dependency.bundling": "external",
-        "org.gradle.jvm.version": 17,
+        "org.gradle.jvm.version": 25,
         "org.gradle.libraryelements": "jar",
         "org.gradle.usage": "java-api"
       },
       "files": [
         {
-          "name": "api-native-hint-1.0.0.jar",
-          "url": "api-native-hint-1.0.0.jar",
-          "size": 20158,
-          "sha512": "9471c7016f54b742a4e6e907cb08e8f02397779d16038cbc1c32aa9b2c7150c0e5c6704b068d134689c0c822ecb604a9924d39adad2cdbb83147dad174dbc073",
-          "sha256": "83fd2f4ec996319d83bef8e9409ec8924c815af66da4687094cf7dc4fb313681",
-          "sha1": "cb8a22f278dc14e2075982b2ae1fac356db0c8d3",
-          "md5": "ed4ea9a2ec29de75ee9883e4e49a83d8"
+          "name": "api-native-hint-1.0.2.jar",
+          "url": "api-native-hint-1.0.2.jar",
+          "size": 25181,
+          "sha512": "e1a02b863c292110cbbefa6e59ab3d6951daecee7da55638741faa4b979300794a2b96d5713ab8a468997f56985c84362ae9b5fde5b122c9cf755ec94aed1bfe",
+          "sha256": "d70d5f60b9f574bfd51e039b043470f5c8cf7fc4b549295d005de7ecd0619601",
+          "sha1": "f63be061ef2c102719d0bed924b2b83149c88d39",
+          "md5": "5f21a41151fa62bd6d923ea32a22ba19"
         }
       ]
     },
@@ -40,7 +40,7 @@
       "attributes": {
         "org.gradle.category": "library",
         "org.gradle.dependency.bundling": "external",
-        "org.gradle.jvm.version": 17,
+        "org.gradle.jvm.version": 25,
         "org.gradle.libraryelements": "jar",
         "org.gradle.usage": "java-runtime"
       },
@@ -55,13 +55,13 @@
       ],
       "files": [
         {
-          "name": "api-native-hint-1.0.0.jar",
-          "url": "api-native-hint-1.0.0.jar",
-          "size": 20158,
-          "sha512": "9471c7016f54b742a4e6e907cb08e8f02397779d16038cbc1c32aa9b2c7150c0e5c6704b068d134689c0c822ecb604a9924d39adad2cdbb83147dad174dbc073",
-          "sha256": "83fd2f4ec996319d83bef8e9409ec8924c815af66da4687094cf7dc4fb313681",
-          "sha1": "cb8a22f278dc14e2075982b2ae1fac356db0c8d3",
-          "md5": "ed4ea9a2ec29de75ee9883e4e49a83d8"
+          "name": "api-native-hint-1.0.2.jar",
+          "url": "api-native-hint-1.0.2.jar",
+          "size": 25181,
+          "sha512": "e1a02b863c292110cbbefa6e59ab3d6951daecee7da55638741faa4b979300794a2b96d5713ab8a468997f56985c84362ae9b5fde5b122c9cf755ec94aed1bfe",
+          "sha256": "d70d5f60b9f574bfd51e039b043470f5c8cf7fc4b549295d005de7ecd0619601",
+          "sha1": "f63be061ef2c102719d0bed924b2b83149c88d39",
+          "md5": "5f21a41151fa62bd6d923ea32a22ba19"
         }
       ]
     },
@@ -75,13 +75,13 @@
       },
       "files": [
         {
-          "name": "api-native-hint-1.0.0-javadoc.jar",
-          "url": "api-native-hint-1.0.0-javadoc.jar",
-          "size": 103802,
-          "sha512": "b1b3dd21b44bae614c26fc9b5be368517595a3e6fea7e7b67e872656b45e9763c6784c7618c354196a19e14401e68778d4e87c7ab1886db6f749d55f87a0b085",
-          "sha256": "dc11872f61f5a0affffd202aec65d8e5f6a2aefca9ca06ec69a56daae698782d",
-          "sha1": "b1754c6ba547adf035aa9aab2280a40e3954a58a",
-          "md5": "1a19ad022b2576da594c1f3b4d300143"
+          "name": "api-native-hint-1.0.2-javadoc.jar",
+          "url": "api-native-hint-1.0.2-javadoc.jar",
+          "size": 4185723,
+          "sha512": "472b80c0efd357f55248bbcefa8992b58975178daab9f5c30a4c9f26577762d13fbb219d3946ee66a42b35889ad55a012b1d0c894c5ca0bd5790a8110e749329",
+          "sha256": "c6263d5f5abd626cf478ad77559c4bb82b55af7fb816e7255821e4ed25ee0563",
+          "sha1": "74d90d9699b26cbdadddacf7854a1fdcc8cb3470",
+          "md5": "4027663078f01f691ae316bd9c793e29"
         }
       ]
     },
@@ -95,13 +95,13 @@
       },
       "files": [
         {
-          "name": "api-native-hint-1.0.0-sources.jar",
-          "url": "api-native-hint-1.0.0-sources.jar",
-          "size": 7852,
-          "sha512": "163b469ad063a5038cdc483eb24be501ae1b6fcbc199f01b31fda9a9b434dc743d31c135bae998bbca8c3f4c0559b40821196d5b77741ac68b7cf2fa6208ab2f",
-          "sha256": "3490484b080f4fc1bd06a4fd0b34475f48bd6771d4ea226c21c1aab17e5e678a",
-          "sha1": "7602f9c65e749d7c96c94ab094a2863cbd4fcf5e",
-          "md5": "89ca811f42b9bde25a4c98aef2fc7f6b"
+          "name": "api-native-hint-1.0.2-sources.jar",
+          "url": "api-native-hint-1.0.2-sources.jar",
+          "size": 10699,
+          "sha512": "b876f62b3d3cac87bf7f46ba5029f8cda0df11e676ee1f2200f912b8963e9f1fbcd064662e946f00b694767b6cac481d871ba259bae0d20ac40273d3d0df6968",
+          "sha256": "ff5a3221a533f256a9053d6e7a631ebe52bd849719ea5845aebae9cd8b154808",
+          "sha1": "51dd8f6832125a04c3dee1fbdb59a1b58a1d32a5",
+          "md5": "0b099714653d5227c8ae085f620f08f6"
         }
       ]
     }

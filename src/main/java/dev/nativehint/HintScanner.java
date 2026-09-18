@@ -4,6 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
@@ -38,6 +39,34 @@ public class HintScanner {
 			throw new UncheckedIOException(e);
 		}
 		return results;
+	}
+
+	/**
+	 * true si alguna clase del árbol tiene {@code @NativeHint} (por nombre simple, sin exigir que
+	 * el tipo de la anotación esté en ningún classpath conocido). Es el gate de activación: sin
+	 * esto en ningún lado, {@code hintHunterGenerate} no debe generar nada.
+	 */
+	public boolean hasNativeHintMarker(Path sourceRoot) {
+		JavaParser parser = buildParser(sourceRoot);
+		try (Stream<Path> files = Files.walk(sourceRoot)) {
+			return files.filter(p -> p.toString().endsWith(".java")).anyMatch(file -> fileHasMarker(parser, file));
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	private boolean fileHasMarker(JavaParser parser, Path file) {
+		ParseResult<CompilationUnit> result;
+		try {
+			result = parser.parse(file);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return result.getResult()
+				.map(cu -> cu.findAll(TypeDeclaration.class).stream()
+						.anyMatch(type -> type.getAnnotations().stream()
+								.anyMatch(a -> a.getNameAsString().equals("NativeHint"))))
+				.orElse(false);
 	}
 
 	private JavaParser buildParser(Path sourceRoot) {

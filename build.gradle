@@ -6,8 +6,8 @@ plugins {
 	id 'com.gradle.plugin-publish' version '2.2.1'
 }
 
-group = 'dev.nativehint'
-version = '1.0.0'
+group = 'io.github.matiasferrerovilas'
+version = '1.0.2'
 
 gradlePlugin {
 	website = 'https://github.com/matiasferrerovilas/native-hint'
@@ -25,7 +25,7 @@ gradlePlugin {
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
