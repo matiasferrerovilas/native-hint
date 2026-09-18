@@ -64,8 +64,7 @@ public class HintScanner {
 		}
 		return result.getResult()
 				.map(cu -> cu.findAll(TypeDeclaration.class).stream()
-						.anyMatch(type -> type.getAnnotations().stream()
-								.anyMatch(a -> a.getNameAsString().equals("NativeHint"))))
+						.anyMatch(type -> type.getAnnotationByName("NativeHint").isPresent()))
 				.orElse(false);
 	}
 
